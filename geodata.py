@@ -52,65 +52,59 @@ fig.tight_layout()
 
 fig.savefig("initial_map.png")
 
+# This cell is unecessary and just was my first attempt at a base map
+
 #%%
 
 def add_insetmap(axes_extent, map_extent, state_name, facecolor, edgecolor, geometry):
-    # create new axes, set its projection
-    use_projection = ccrs.Mercator()      # preserves shape
-    #use_projection = ccrs.PlateCarree()  # large distortion in E-W, bad for for Alaska
-    geodetic = ccrs.Geodetic(globe=ccrs.Globe(datum='WGS84'))
-    sub_ax = plt.axes(axes_extent, projection=use_projection)  # normal units
-    sub_ax.set_extent(map_extent, geodetic)  # map extents
 
-    # option to add basic land, coastlines of the map
-    # can comment out if you don't need them
+    use_projection = ccrs.Mercator()      
+    geodetic = ccrs.Geodetic(globe=ccrs.Globe(datum='WGS84'))
+    sub_ax = plt.axes(axes_extent, projection=use_projection) 
+    sub_ax.set_extent(map_extent, geodetic) 
+
     sub_ax.add_feature(cartopy.feature.LAND)
     sub_ax.coastlines()
     sub_ax.set_title(state_name)
 
-    # add map `geometry`
     sub_ax.add_geometries([geometry], ccrs.PlateCarree(), \
                           facecolor=facecolor, edgecolor=edgecolor, lw=0.3)
-    # +++ more features can be added here +++
-    # plot box around the map
+  
     extent_box = sgeom.box(map_extent[0], map_extent[2], map_extent[1], map_extent[3])
     sub_ax.add_geometries([extent_box], ccrs.PlateCarree(), color='none')
 
+# Defining a function to inset the maps, choosing the map projection, setting the
+# axes to our projection, setting the extent to the geodetic projection set earlier. 
+
+# Adding land polygons, coastlines, and setting the axis title, adding the geometry
+# map with the same projection and setting colors and size.
+# Creating a box around the inset map with the size color and projection
 
 
-# extract parts of the whole 'newusa' geodataframe for separate plotting/manipulation
-# 'usa_main': excluding non-conterminous states
-usa_main = geodata[~geodata['NAME'].isin(["Alaska", "Hawaii"])] # exclude these
-#  re-project usa_main to equal-area conic projection "EPSG:2163"
-usa_main.crs = {'init': 'epsg:4326'}
-usa_main = usa_main.to_crs(epsg=2163)
+lower = geodata[~geodata['NAME'].isin(["Alaska", "Hawaii"])]
+lower.crs = {'init': 'epsg:4326'}
+lower = lower.to_crs(epsg=2163)
 
-# 'usa_more': non-conterminous states, namely, Alaska and Hawaii
-usa_more = geodata[geodata['NAME'].isin(["Alaska", "Hawaii"])]  # include these
+akhi = geodata[geodata['NAME'].isin(["Alaska", "Hawaii"])] 
+
+# Pulling the groups of states we want to plot seperately (contiguous and AK,HI),
+# setting the contiguous to the the map projection
 
 #%%
-# ------------ Plot --------------
-# plot 1st part, using usa_main and grab its axis as 'ax2'
-
 my_colormap = matplotlib.cm.PuBuGn
-
-# some settings
 edgecolor = "gray"
 
-ax2 = usa_main.plot(column="PERCENT NOT ACCESS", legend=False, 
+ax2 = lower.plot(column="PERCENT NOT ACCESS", legend=False, 
                     cmap=matplotlib.cm.PuBuGn, ec=edgecolor, lw=0.4)
 
-# manipulate colorbar/legend
 fig = ax2.get_figure()
-cax = fig.add_axes([0.9, .25, 0.02, 0.5])  #[left,bottom,width,height]
+cax = fig.add_axes([0.9, .25, 0.02, 0.5]) 
 sm = plt.cm.ScalarMappable(cmap=my_colormap, 
         norm=plt.Normalize(vmin=min(geodata["PERCENT NOT ACCESS"]),vmax=max(geodata["PERCENT NOT ACCESS"])))
 
-# clear the array of the scalar mappable
 sm._A = []
 cb = fig.colorbar(sm, cax=cax)
 
-# manipulate the axis seetings
 ax2.set_frame_on(False)
 ax2.set_xticks([])
 ax2.set_yticks([])
@@ -118,35 +112,30 @@ ax2.set_xticklabels([])
 ax2.set_yticklabels([])
 ax2.set_title("Percent of Women Aged 15-44 who Cannot Access an Abortion")
 
+# Setting the colors, plotting the contiguous map as normal, setting the colorbar/legend,
+# clearing the array of the scalar mappable, changing the axis settings
 #%%
-# add more features on ax2
-# plot Alaska, Hawaii as inset maps
-for index,state in usa_more.iterrows():
+for index,state in akhi.iterrows():
 
     if state['NAME'] in ("Alaska", "Hawaii"):
         st_name = state['NAME']
-
-        # set fill color, using normalized `sclass` on `my_colormap`
         facecolor = my_colormap( state["PERCENT NOT ACCESS"] / max(geodata["PERCENT NOT ACCESS"] ))
 
         if st_name == "Alaska":
-            # (1) Alaska
-            # Custom extent, relative size
-            map_extent = (-178, -135, 46, 73)    # degrees: (lonmin,lonmax,latmin,latmax)
-            axes_extent = (0.04, 0.06, 0.29, 0.275) # axes units: 0 to 1, (LLx,LLy,width,height)
+            map_extent = (-178, -135, 46, 73)
+            axes_extent = (0.04, 0.06, 0.29, 0.275) 
 
         if st_name == "Hawaii":
-            # (2) Hawaii
-            # Custom extent, relative size
             map_extent = (-162, -152, 15, 25)
             axes_extent = (0.27, 0.06, 0.15, 0.15)
 
-        # add inset maps
         add_insetmap(axes_extent, map_extent, st_name, \
                      facecolor, \
                      edgecolor, \
                      state["geometry"])
-
 plt.show()
 
 fig.savefig("AborPct.png", dpi=300)
+
+# Ploting AKHI as inset using a loop, setting the fill color according to our input 
+# geodata, setting the size of the map and axes according the the state, adding the maps and plotting and saving
