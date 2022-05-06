@@ -11,6 +11,12 @@ import pandas as pd
 
 pd.set_option('display.max_rows',None)
 
+# Importing the necessary modules, allowing for large dataframes
+# The following cells all present Census API calls from the ACS. The scripts below
+# call the data using your specific Census key and then building the information
+# into a dataframe and changing the variable codes to recognizable variable names
+# dropping the territories provided in Census data, dropping the collumn with the state 
+# name and saving the data to a csv (optional) for future use 
 #%%
 
 # Current College Enrollment By Gender
@@ -53,6 +59,7 @@ sex_by_college = sex_by_college.drop(labels=[51], axis=0)
 sex_by_college = sex_by_college.drop(columns='state')
 
 sex_by_college.to_csv('sex_by_college.csv')
+
 
 
 #%%
@@ -216,3 +223,6 @@ merge = pd.merge(merge, sex_by_college, on='NAME', how='left')
 merge = pd.merge(merge, pop, on='NAME', how='left')
 
 merge.to_csv("merge.csv")
+
+# Taking the CSV from the abortion access rank and merging all of the Census dataframes
+# onto that data and saving it to a CSV for our next script!

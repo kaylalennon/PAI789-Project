@@ -82,13 +82,13 @@ my_colormap = matplotlib.cm.PuBuGn
 
 edgecolor = "gray"
 
-ax2 = usa_main.plot(column="Population under 18 Years Below Poverty Line", legend=False, 
+ax2 = usa_main.plot(column="COLUMN OF CHOICE", legend=False, 
                     cmap=matplotlib.cm.PuBuGn, ec=edgecolor, lw=0.4)
 
 fig = ax2.get_figure()
 cax = fig.add_axes([0.9, .25, 0.02, 0.5]) 
 sm = plt.cm.ScalarMappable(cmap=my_colormap, 
-        norm=plt.Normalize(vmin=min(geodata["Population under 18 Years Below Poverty Line"]),vmax=max(geodata["Population under 18 Years Below Poverty Line"])))
+        norm=plt.Normalize(vmin=min(geodata['COLUMN OF CHOICE']),vmax=max(geodata['COLUMN OF CHOICE'])))
 
 sm._A = []
 cb = fig.colorbar(sm, cax=cax)
@@ -106,7 +106,7 @@ for index,state in usa_more.iterrows():
 
     if state['NAME'] in ("Alaska", "Hawaii"):
         st_name = state['NAME']
-        facecolor = my_colormap( state["Population under 18 Years Below Poverty Line"] / max(geodata["Population under 18 Years Below Poverty Line"] ))
+        facecolor = my_colormap( state['COLUMN OF CHOICE'] / max(geodata['COLUMN OF CHOICE'] ))
 
         if st_name == "Alaska":
             map_extent = (-178, -135, 46, 73)    
@@ -123,4 +123,4 @@ for index,state in usa_more.iterrows():
 
 plt.show()
 
-fig.savefig("ChildPov.png", dpi=300)
+fig.savefig("VARIABLE.png", dpi=300)

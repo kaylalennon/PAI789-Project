@@ -14,6 +14,7 @@ import cartopy
 import cartopy.crs as ccrs
 import shapely.geometry as sgeom
 
+# Importing the necessary modules for utilizing our geodataframe and our advanced plots
 #%%
 
 pregeo = pd.read_csv("merged.csv")
@@ -36,11 +37,20 @@ states = states.drop(columns={'STATEFP', 'STATENS', 'STUSPS'})
 
 states.to_csv("states.csv")
 
+# Reading the csv of our abortion ranked data and the social indicators, getting 
+# rid of the empty first column that is there when the CSV is read, reading a 
+# shapfile that contains the projection of the USA we will use, dropping the 
+# areas included that are not states, setting the index to the GEOID, checking
+# the drop, dropping the columns of data that we do not need, saving to CSV
+# for future use (optional)
+
 #%%
 
 geodata = states.merge(pregeo,on='NAME',how='left',validate='1:1',indicator=True)
 
 geodata = geodata.sort_values(by="RANK")
+
+# Merging the aboriton and social indicator data onto the 
 
 #%%
 
@@ -52,6 +62,8 @@ fig.tight_layout()
 
 fig.savefig("initial_map.png")
 
+
+# Setting up a plot with the geodata to try the projection
 # This cell is unecessary and just was my first attempt at a base map
 
 #%%

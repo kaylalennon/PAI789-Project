@@ -14,6 +14,9 @@ import cartopy
 import cartopy.crs as ccrs
 import shapely.geometry as sgeom
 
+# Same process as the geodata.py script for mapping a variable in the geodata 
+# dataframe please refer to that script for comments if necessary 
+
 #%%
 
 pregeo = pd.read_csv("merged.csv")
