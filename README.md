@@ -20,7 +20,7 @@ data inputs:
     
 3. social indicator data
 
-    all of the social data comes from the census! the verywell health data uses the population estimates from the 5 year american community survey population estimates from 2019 so all of our the variables also come from that same 5 year acs estimate using api calls 
+    all of the social data comes from the census! the verywell health data uses the population estimates from the 5 year american community survey population estimates from 2019 so all of the variables also come from that same 5 year acs estimate using api calls 
 
 4. necessary downloads/systems
 
@@ -29,6 +29,8 @@ data inputs:
     cartopy - adds support for making maps and other visuals using geospatial data - https://scitools.org.uk/cartopy/docs/latest/installing.html
    
     census api key - allows you to pull large amount of census data from census tables - https://api.census.gov/data/key_signup.html
+    
+    census data tables - landing page for census tables which you will pull your data from - https://data.census.gov/cedsci/
 
 script running order:
     
